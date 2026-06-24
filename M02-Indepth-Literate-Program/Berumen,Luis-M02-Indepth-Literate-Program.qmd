@@ -419,12 +419,8 @@ This suggests the model is overfitting performing well on the training data but 
 
 ## Published report on GitHub Pages
 
-Add your published GitHub Pages URL here:
-
-[Published Report](https://your-github-pages-url-here)
+[Published Report](https://brahhmen55.github.io/IBM6300/)
 
 ## GitHub Repository
 
-Add your GitHub repository URL here:
-
-[GitHub Repository](https://your-github-repo-url-here)
+[GitHub Repository](https://github.com/Brahhmen55/IBM6300)
