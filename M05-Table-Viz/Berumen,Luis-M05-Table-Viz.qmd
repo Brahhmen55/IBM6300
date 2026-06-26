@@ -1,0 +1,255 @@
+---
+title: "M05-Visualizing Data with Tables"
+author: "Luis Berumen"
+date: '`r format(Sys.time(), "%B %d, %Y")`'
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-expand: 2
+    number-sections: true
+    code-link: true
+    code-tools: true
+    code-fold: true
+    code-overflow: wrap
+    embed-resources: true
+    theme: cosmo
+
+output-file: index.html
+editor: visual
+execute:
+  freeze: auto
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(gt)
+library(gtExtras)
+library(scales)
+
+set.seed(2024)
+```
+
+# Write a Short Essay
+
+- Summarize what you learned from the videos you watched.
+- What did you like about the `gt` and `gtExtra` packages demonstrated in the videos?
+- How do tables complement charts for data visualization?
+- Under what circumstances would you prefer to use tables rather than charts to visualize data?
+
+## Response
+
+The videos showed me that tables can be used as a form of data visualization when they are designed carefully. Before this module, I mostly thought of tables as plain rows and columns. However, the videos demonstrated that tables can communicate patterns, comparisons, and key findings when they are formatted professionally. I learned that the `gt` package allows users to build a table step by step from a data frame. Some of the most useful functions include `tab_header()` for titles and subtitles, `cols_label()` for clearer column names, `fmt_number()` and `fmt_currency()` for formatting values, `tab_source_note()` for documenting the data source, and `tab_footnote()` for explaining important details.
+
+What I liked most about `gt` is that it gives the user control over the table's appearance. Instead of showing a basic default table, I can customize titles, subtitles, column labels, spanner labels, borders, fonts, alignment, source notes, and footnotes. These features make the final table look more appropriate for a written report, business presentation, or portfolio project. I also liked `gtExtras` because it adds visual elements directly inside a table. For example, small bar charts can make it easier to compare groups while still keeping the exact numbers available. This combination of numbers and visuals makes the table easier to scan and more useful for decision-making.
+
+Tables complement charts because they serve a different purpose. Charts are useful for showing broad visual patterns, trends, and relationships. For example, a line chart is good for showing changes over time, while a bar chart is good for quickly comparing categories. Tables are stronger when the reader needs exact values, multiple statistics, and detailed labels. A chart can show that one group performs better than another, but a table can show the exact response rate, sample size, average income, average order amount, and other supporting details.
+
+I would prefer to use tables rather than charts when exact values are important, when several metrics need to be compared at the same time, or when the output needs to be included in a written report. Tables are also useful for descriptive statistics, model summaries, and business performance summaries. In a marketing analytics setting, a table can help managers compare customer groups using multiple measures in one compact display. Charts may be better for quick impressions, but tables are better when accuracy, detail, and documentation matter.[^1]
+
+[^1]: In this report, I use a table because the goal is to compare exact customer segment metrics rather than only show a general pattern.
+
+::: callout-tip
+## Main Takeaway
+
+`gt` helps make tables professional, while `gtExtras` helps make tables more visual by adding charts inside the table.
+:::
+
+# Use the Synthetic Data and Create a `gt` / `gtExtras` Table
+
+Use the synthetic data introduced this week for the lecture. Pick some variables of your interest from the data and share some descriptive statistics using `gt` and `gtExtra` functions together to show numbers and small charts in one table. In this table, incorporate the following at a minimum:
+
+- Add titles and subtitles to the tables.
+- Give labels to the stub head.
+- Relabel the variable names in the table to make them easier to understand.
+- Add source notes.
+- Add footnotes.
+- Add spanner column label.
+- Format numbers with 2 decimal points and currency signs, if applicable.
+- If applicable, color a column or row with numeric data.
+- Use additional functions as needed for your data.
+
+## Response
+
+The synthetic dataset used in this report is a direct-mail marketing dataset. Each row represents one prospect in a customer acquisition campaign. The outcome variable is whether the prospect responded to the campaign by buying. I grouped the data by **loyalty tier** because loyalty tier is a useful customer segmentation variable for marketing decisions.
+
+```{r}
+#| label: synthetic-data
+
+set.seed(123)
+n <- 3000
+
+mail_data <- tibble(
+  customer_id = paste0("C", str_pad(1:n, 5, pad = "0")),
+  age = round(rnorm(n, mean = 45, sd = 12)),
+  income = round(rlnorm(n, meanlog = 10.8, sdlog = 0.6)),
+  recency_days = round(rexp(n, rate = 1 / 60)),
+  freq_12mo = rpois(n, lambda = 3),
+  avg_order_amt = round(rlnorm(n, meanlog = 4.2, sdlog = 0.5), 2),
+  channel = sample(
+    c("email", "direct_mail", "digital"),
+    n,
+    replace = TRUE,
+    prob = c(0.5, 0.3, 0.2)
+  ),
+  region = sample(
+    c("West", "South", "Midwest", "Northeast"),
+    n,
+    replace = TRUE
+  ),
+  loyalty_tier = sample(
+    c("Bronze", "Silver", "Gold", "Platinum"),
+    n,
+    replace = TRUE,
+    prob = c(0.4, 0.3, 0.2, 0.1)
+  ),
+  responded = rbinom(
+    n,
+    1,
+    prob = plogis(
+      -3 +
+        0.02 * (age - 45) +
+        0.3 * log(income / 50000) +
+        0.1 * freq_12mo -
+        0.005 * recency_days
+    )
+  )
+) |>
+  mutate(
+    income = if_else(runif(n) < 0.08, NA_real_, income),
+    avg_order_amt = if_else(runif(n) < 0.05, NA_real_, avg_order_amt),
+    responded = factor(responded, levels = c(1, 0), labels = c("yes", "no"))
+  )
+```
+
+The table below summarizes campaign performance and customer value indicators by loyalty tier.
+
+```{r}
+#| label: descriptive-table-data
+
+summary_by_tier <- mail_data |>
+  group_by(loyalty_tier) |>
+  summarise(
+    prospects = n(),
+    response_rate = mean(responded == "yes", na.rm = TRUE),
+    response_visual = response_rate * 100,
+    avg_age = mean(age, na.rm = TRUE),
+    avg_income = mean(income, na.rm = TRUE),
+    avg_order_amt = mean(avg_order_amt, na.rm = TRUE),
+    avg_frequency = mean(freq_12mo, na.rm = TRUE),
+    avg_recency_days = mean(recency_days, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(
+    loyalty_tier = factor(
+      loyalty_tier,
+      levels = c("Bronze", "Silver", "Gold", "Platinum")
+    )
+  ) |>
+  arrange(loyalty_tier)
+```
+
+```{r}
+#| label: tbl-campaign-performance
+#| tbl-cap: "Campaign performance summary by loyalty tier"
+
+campaign_table <- summary_by_tier |>
+  gt(rowname_col = "loyalty_tier") |>
+  tab_header(
+    title = md("**Direct-Mail Campaign Performance by Loyalty Tier**"),
+    subtitle = "Response behavior and customer value indicators from a synthetic acquisition campaign"
+  ) |>
+  tab_stubhead(label = "Loyalty Tier") |>
+  tab_spanner(
+    label = "Campaign Response",
+    columns = c(prospects, response_rate, response_visual)
+  ) |>
+  tab_spanner(
+    label = "Customer Profile",
+    columns = c(avg_age, avg_income, avg_order_amt, avg_frequency, avg_recency_days)
+  ) |>
+  cols_label(
+    prospects = "Prospects",
+    response_rate = "Response Rate",
+    response_visual = "Response Visual",
+    avg_age = "Avg. Age",
+    avg_income = "Avg. Income",
+    avg_order_amt = "Avg. Order Amount",
+    avg_frequency = "Avg. Purchases",
+    avg_recency_days = "Avg. Recency Days"
+  ) |>
+  fmt_number(
+    columns = c(avg_age, avg_frequency, avg_recency_days),
+    decimals = 2
+  ) |>
+  fmt_percent(
+    columns = response_rate,
+    decimals = 2
+  ) |>
+  fmt_currency(
+    columns = c(avg_income, avg_order_amt),
+    currency = "USD",
+    decimals = 2
+  ) |>
+  gt_plt_bar_pct(
+    column = response_visual,
+    scaled = TRUE,
+    labels = TRUE,
+    decimals = 1
+  ) |>
+  data_color(
+    columns = response_rate,
+    palette = "Blues"
+  ) |>
+  tab_footnote(
+    footnote = "Response rate is the percentage of prospects who responded yes to the campaign.",
+    locations = cells_column_labels(columns = response_rate)
+  ) |>
+  tab_footnote(
+    footnote = "Income and average order amount contain simulated missing values, so averages are calculated using available cases.",
+    locations = cells_column_labels(columns = c(avg_income, avg_order_amt))
+  ) |>
+  tab_source_note(
+    source_note = "Source: Synthetic direct-mail marketing dataset created for M05 lecture practice."
+  ) |>
+  cols_width(
+    prospects ~ px(90),
+    response_rate ~ px(120),
+    response_visual ~ px(160),
+    avg_age ~ px(90),
+    avg_income ~ px(130),
+    avg_order_amt ~ px(140),
+    avg_frequency ~ px(120),
+    avg_recency_days ~ px(130)
+  ) |>
+  opt_table_font(font = list(google_font("Roboto"), default_fonts())) |>
+  opt_align_table_header(align = "left") |>
+  tab_options(
+    table.font.size = px(13),
+    heading.title.font.size = px(18),
+    heading.subtitle.font.size = px(13),
+    column_labels.font.weight = "bold",
+    row.striping.include_table_body = TRUE,
+    table.border.top.width = px(2),
+    table.border.bottom.width = px(2)
+  )
+
+campaign_table
+```
+
+# Explain Why the Table Is Worth Adding to the MSDM Project
+
+## Response
+
+This table is worth adding to my MSDM project because it demonstrates my ability to interpret data and communicate meaningful insights through professional data visualizations. It shows that I can take a dataset, organize and summarize the information, and present it in a way that is easy for others to understand. By using the `gt` and `gtExtras` packages, I can create publication-quality tables that combine descriptive statistics with visual elements, making complex information more accessible. These skills are valuable because they can be applied to virtually any dataset, allowing me to analyze data and create effective visualizations that help explain patterns, trends, and key findings to different audiences.
+
+# Publish the QMD File to GitHub Pages
+
+[Published Report](https://brahhmen55.github.io/IBM6300/)
