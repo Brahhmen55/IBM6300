@@ -27,7 +27,7 @@ execute:
 The Shopify catalog includes 10 products. The products are organized around custom trading cards and accessories that support collecting, protecting, and displaying cards.
 
 | \# | Product Name | Category | Price | Catalog Role |
-|--------------:|---------------|---------------|--------------:|---------------|
+|---:|----|----|---:|----|
 | 1 | Basic Custom Card | Gaming Cards | \$19.99 | Entry-level custom card option |
 | 2 | Holo Custom Card | Gaming Cards | \$29.99 | Mid-tier card with a holographic-style look |
 | 3 | EX Custom Card | Gaming Cards | \$39.99 | Premium card style with stronger visual effects |
