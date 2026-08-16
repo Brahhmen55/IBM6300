@@ -1,0 +1,59 @@
+---
+title: "Google Shopping Ads Certification Part 1: Foundations & Requirements"
+author: "Luis Berumen"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 4
+    toc-expand: 3
+    number-sections: true
+    code-link: true
+    code-tools: true
+    code-overflow: wrap
+    embed-resources: true
+    theme: cosmo
+output-file: index.html
+editor: visual
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+---
+
+# Google Skillshop Modules
+
+## Grow Your Retail Business with Google
+
+Completed the **Grow Your Retail Business with Google** module.
+
+## Know How Shopping Ads Work
+
+Completed the **Know How Shopping Ads Work** module.
+
+## Identify Key Shopping Ad Requirements
+
+Completed the **Identify Key Shopping Ad Requirements** module.
+
+# Proof of Completion
+
+![](google-shopping-modules-completed.png){width="100%"}
+
+# CPP Farm Store Application Reflection
+
+Google Shopping Ads and product listings can help CPP Farm Store reach more customers by making the products easier to discover before someone visits the physical store. Our project found that customers do not currently have a strong digital way to browse products and the ordering process can rely on phone or email. With this in mind Google Shopping can help connect product discovery directly to the Shopify storefront our group created. Instead of only seeing general information about the Farm Store, customers could see a product image, title, price, and availability and then go directly to the product page.
+
+The customer segment that would benefit the most is CPP students because they are close to campus and often need a quick and convenient way to see what is available. Our project also identified alumni, campus visitors, and gift purchasers as important secondary customers. Gift purchasers especially benefit from online discovery because they may want to compare products and plan an order before coming to campus. Our Shopify prototype supported this by including a product catalog, search, gift basket customization, cart, and BOPIS checkout.
+
+Before using Shopping Ads, CPP Farm Store needs accurate product information. Our group created a Google Merchant Center feed with 18 offers across six categories, which helped show how important the product feed is. Product titles, descriptions, images, prices, availability, and landing pages all need to match. If the Google listing shows one price or says the product is available but Shopify shows something different, the customer could lose trust or leave the site. The landing page also needs to make the next step clear so the customer can easily add the product to the cart or continue shopping.
+
+One challenge is that CPP Farm Store sells seasonal and changing inventory. Products can sell out or change depending on what is available, which means the feed would need to be updated regularly. Another challenge is getting customers from the product page into the cart. Our final dashboard found that only about 15% of product page visitors added an item to their cart. This shows that getting the customer to the website is only part of the process. The product page still needs strong information and a clear reason to purchase.
+
+Our group applied these ideas across the Shopify Mini-Store, Product Feed, and Retail Media Setup together. The Shopify store created the digital shopping experience, the 18-offer product feed organized products for Google, and the retail media work connected those products to customer discovery. By keeping the same product information across these parts and making the path from Google to Shopify easier, CPP Farm Store can create a stronger ecommerce experience and be better prepared to use Shopping Ads.
+
+# Appendix
+
+[Published Report](https://brahhmen55.github.io/IBM6300/)
+
+[GitHub Repository](https://github.com/Brahhmen55/IBM6300)
